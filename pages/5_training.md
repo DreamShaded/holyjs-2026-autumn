@@ -221,7 +221,7 @@ clicks: 5
 [click] Поэтому сделали по-честному. Делим story на пять кучек. Story у нас тогда было всего 12, так что в кучке две-три story. Учим сеть на четырёх кучках, а пятую прячем для контрольной. Справа: книжки — учебник, колба — контрольная.
 [click] Потом учим заново, уже с другой спрятанной кучкой.
 [click] И так пять раз, пока каждая кучка не побывает контрольной. Это называется k-fold. Получается пять проверочных сетей, у каждой своя контрольная. Кучки собираем без случайности, по хешу имени story: запустишь ещё раз — получишь те же кучки.
-[click] Итог: в среднем восемьдесят процентов попаданий, а не сто, плюс-минус шестнадцать. Разброс между кучками — от 62 до 100. Та самая сотня оказалась самой удачной кучкой из пяти, а не типичным результатом. Неприятно, зато честно.
+[click] Итог: в среднем восемьдесят процентов попаданий, а не сто, плюс-минус шестнадцать. Разброс между кучками — от 62 до 100. кажется, что-то слабовато
 -->
 
 ---
@@ -249,7 +249,7 @@ clicks: 2
     { points: [0.25, 0.36, 0.3, 0.33, 0.38], color: '#ff6b6b', label: 'loss', show: $clicks >= 1 },
     { points: [0.61, 0.66, 0.7, 0.74, 0.73], color: '#56ff71', label: 'попадания', show: $clicks >= 1 },
   ]"
-  :marker="{ x: 0, label: 'лучший loss', show: $clicks >= 1 }"
+  :marker="{ x: 0, label: '', show: $clicks >= 1 }"
   :width="400"
   :height="300"
 />
@@ -270,6 +270,7 @@ clicks: 2
 ---
 layout: simple-slide
 variant: 13
+hide: true
 ---
 
 ## Когда остановить тренировку
@@ -315,6 +316,7 @@ layout: two-cols
 variant: 30
 leftWidth: 50%
 clicks: 4
+hide: true
 ---
 
 ::header::
@@ -430,12 +432,14 @@ variant: 26
 <p class="motto" v-click="1">Меньше строгости, больше разнообразия</p>
 
 <div class="growth">
-  <div class="card no" v-click="2">
-    Зубрёжка была оттого, что задачек мало: всего <span class="gnum">12</span> story
+  <div class="tile no" v-click="2">
+    <div class="hero"><span class="gnum">12</span><span class="unit">story</span></div>
+    Зубрёжка была оттого, что задачек мало
   </div>
-  <div class="arrow" v-click="3">→</div>
-  <div class="card ok" v-click="3">
-    Сделали <span class="gnum">54</span>: 18 состояний и у каждого ещё два варианта со своим шрифтом, фоном и размером текста
+  <div class="arrow" v-click="3"><tabler-arrow-right /></div>
+  <div class="tile ok" v-click="3">
+    <div class="hero"><span class="gnum">54</span><span class="unit">story</span></div>
+    18 состояний и у каждого ещё два варианта со своим шрифтом, фоном и размером текста
     <div class="variants">
       <span style="font-family: Inter, sans-serif">Aa</span>
       <span style="font-family: Roboto, Arial, sans-serif">Aa</span>
@@ -458,24 +462,29 @@ variant: 26
   align-items: stretch;
   margin-top: 0.8rem;
 }
+.growth .tile {
+  min-height: 250px;
+}
 .growth .arrow {
   align-self: center;
-  font-size: 2rem;
+  font-size: 2.4rem;
   color: var(--color-cyan);
 }
-.growth .gnum {
-  font-size: 2.6rem;
+.unit {
+  font-size: 1.4rem;
+  font-weight: 700;
 }
 .variants {
   display: flex;
   gap: 0.6rem;
-  margin-top: 0.8rem;
+  margin-top: auto;
 }
 .variants span {
   font-size: 1.8rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 8px;
+  padding: 0.2rem 0.7rem;
+  border-radius: 10px;
   border: 1px solid var(--dd-card-border);
+  background: rgba(255, 255, 255, 0.04);
 }
 .variants .light {
   background: #f1f1f1;
@@ -501,16 +510,19 @@ variant: 26
 
 ## Нейросети как дети
 
-<div class="cards three">
-  <div class="card stat" v-click="1">
+<div class="three">
+  <div class="tile" v-click="1">
+    <div class="t-ico"><tabler-equal /></div>
     <span class="gnum">90 %</span>
     Среднее почти не поменялось
   </div>
-  <div class="card stat" v-click="2">
+  <div class="tile" v-click="2">
+    <div class="t-ico"><tabler-arrows-minimize /></div>
     <span class="gnum">÷3</span>
     Разброс между кучками сжался втрое: было 68–100, стало 83–93
   </div>
-  <div class="card stat ok" v-click="3">
+  <div class="tile ok" v-click="3">
+    <div class="t-ico"><logos-vuetifyjs /></div>
     <span class="gnum">47 → 81 %</span>
     Сеть стала лучше понимать чужие компоненты Vuetify, которых никогда не видела
   </div>
@@ -518,8 +530,18 @@ variant: 26
 
 <style scoped>
 .three {
-  grid-template-columns: 1fr 1fr 1.2fr;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.5fr;
+  gap: 1.2rem;
   margin-top: 1rem;
+}
+.three .tile {
+  min-height: 300px;
+}
+.three .gnum {
+  font-size: 3.2rem;
+  margin: 0.4rem 0;
+  white-space: nowrap;
 }
 </style>
 
@@ -538,8 +560,8 @@ variant: 11
 ## Распознаём несколько отличий
 
 <div class="blank">
-  <div class="card no" v-click="1">
-    <div class="ico"><tabler-clipboard-list /></div>
+  <div class="tile no" v-click="1">
+    <div class="t-ico"><tabler-clipboard-list /></div>
     Выход сети с самого начала разрешал несколько галочек, но сеть всегда ставила одну: в каждом примере ломали ровно одно свойство
     <div class="ticks">
       <span class="t">☑ color</span>
@@ -547,7 +569,8 @@ variant: 11
       <span>☐ letter-spacing</span><span>☐ line-height</span><span>☐ border</span>
     </div>
   </div>
-  <div class="card ok stat" v-click="2">
+  <div class="tile ok" v-click="2">
+    <div class="t-ico"><tabler-checks /></div>
     <span class="gnum">0 → 59 %</span>
     Добавили половину примеров с двумя поломками: сеть называет ровно оба свойства, а на обычных хуже не стала
   </div>
@@ -557,26 +580,34 @@ variant: 11
 .blank {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
-  gap: 1rem;
+  gap: 1.2rem;
   margin-top: 0.6rem;
+}
+.blank .tile {
+  min-height: 320px;
 }
 .ticks {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem 1rem;
-  margin-top: 0.8rem;
+  gap: 0.5rem;
+  margin-top: auto;
   font-family: "JetBrains Mono", Consolas, monospace;
 }
 .ticks span {
   font-size: 1.1rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--dd-card-border);
   opacity: 0.6;
 }
 .ticks .t {
   opacity: 1;
   color: var(--color-green);
+  border-color: var(--color-green);
 }
 .blank .gnum {
-  font-size: 3.4rem;
+  font-size: 3.6rem;
+  margin: 0.4rem 0;
 }
 </style>
 
@@ -585,4 +616,3 @@ variant: 11
 [click] Выход сети с самого начала был бланком, где можно отметить несколько вариантов. Но сеть всегда ставила одну галочку. Почему? В обучении в каждом примере было сломано ровно одно свойство. Ученик, решавший только такие тесты, вторую галочку не поставит, даже если правила разрешают.
 [click] Лечится это опять данными. В половину примеров добавили вторую поломку — в генераторе это флаг --multi-share 0.5. И сеть научилась: в 59 процентах двойных поломок называет ровно оба свойства, а было ноль. На обычных примерах хуже не стала. Архитектура давала возможность с самого начала, но умение пришло только из данных.
 -->
-

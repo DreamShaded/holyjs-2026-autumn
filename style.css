@@ -82,6 +82,46 @@
   font-size: 3rem;
 }
 
+/* крупные плитки: градиент сверху, у .ok — зелёная рамка со свечением */
+.slidev-layout .tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.4rem;
+  border-radius: 20px;
+  background: var(--dd-card-bg);
+  border: 1px solid var(--dd-card-border);
+}
+.slidev-layout .tile.no {
+  border-color: rgba(255, 107, 107, 0.6);
+  background: linear-gradient(180deg, rgba(255, 107, 107, 0.12), var(--dd-card-bg) 60%);
+}
+.slidev-layout .tile.ok {
+  border: 2px solid var(--color-green);
+  background: linear-gradient(180deg, rgba(86, 255, 113, 0.14), var(--dd-card-bg) 60%);
+  box-shadow: 0 0 32px rgba(86, 255, 113, 0.25);
+}
+.slidev-layout .tile .hero {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+.slidev-layout .tile .hero .gnum {
+  font-size: 4rem;
+}
+.slidev-layout .tile .t-ico {
+  font-size: 2.6rem;
+  line-height: 1;
+  color: var(--color-cyan);
+}
+.slidev-layout .tile.ok .t-ico {
+  color: var(--color-green);
+}
+.slidev-layout .tile.no .t-ico {
+  color: var(--dd-red);
+}
+
 /* цепочка шагов со стрелками */
 .slidev-layout .flow {
   display: flex;
