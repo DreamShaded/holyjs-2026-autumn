@@ -73,28 +73,90 @@ variant: 12
 ## Инфраструктура
 
 
-<div class="cards grid3">
-  <div class="card no" v-click="1">
-    <div class="ico"><logos-nodejs-icon /></div>
-    обычный JS в Node работает, но <b>116 секунд</b> на маленькой задаче
+<div class="tiles">
+  <div class="tile no" v-click="1">
+    <span class="badge">медленно</span>
+    <div class="big-ico"><logos-nodejs-icon /></div>
+    <div class="title">JS в Node</div>
+    <div class="num bad">116 с</div>
+    <div class="cap">на маленькой задаче</div>
   </div>
-  <div class="card no" v-click="2">
-    <div class="ico"><logos-webassembly /></div>
-    wasm быстрый, но не умеет учиться, только отвечать
+  <div class="tile no" v-click="2">
+    <span class="badge">не учится</span>
+    <div class="big-ico"><logos-webassembly /></div>
+    <div class="title">WebAssembly</div>
+    <div class="num bad">только ответы</div>
+    <div class="cap">быстрый, но обучать на нём нельзя</div>
   </div>
-  <div class="card ok" v-click="3">
-    <div class="ico"><logos-chrome /></div>
-    выбрал headless Chromium, WebGL
+  <div class="tile ok" v-click="3">
+    <span class="badge">выбрал</span>
+    <div class="big-ico"><logos-chrome /></div>
+    <div class="title">Headless Chromium</div>
+    <div class="num accent">&lt; 4 с</div>
+    <div class="cap">та же задача на видеокарте через WebGL</div>
   </div>
 </div>
 
 <style scoped>
-.grid3 {
+.tiles {
+  display: grid;
   grid-template-columns: repeat(3, 1fr);
-  margin-top: 0.6rem;
+  gap: 1.2rem;
+  margin-top: 0.8rem;
 }
-.grid3 .ico {
-  font-size: 2.6rem;
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  min-height: 300px;
+  padding: 2rem 1.2rem 1.4rem;
+  border-radius: 20px;
+  background: var(--dd-card-bg);
+  border: 1px solid var(--dd-card-border);
+}
+.tile.no {
+  border-color: rgba(255, 107, 107, 0.6);
+  background: linear-gradient(180deg, rgba(255, 107, 107, 0.12), var(--dd-card-bg) 60%);
+}
+.tile.ok {
+  border: 2px solid var(--color-green);
+  background: linear-gradient(180deg, rgba(86, 255, 113, 0.14), var(--dd-card-bg) 60%);
+  box-shadow: 0 0 32px rgba(86, 255, 113, 0.25);
+}
+.badge {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  font-size: 1rem;
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+.no .badge {
+  color: var(--dd-red);
+}
+.ok .badge {
+  color: var(--color-green);
+}
+.big-ico {
+  font-size: 4.5rem;
+  line-height: 1;
+  margin: 0.4rem 0 0.6rem;
+}
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.num {
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+.cap {
+  color: var(--dd-sub);
 }
 </style>
 
@@ -112,12 +174,24 @@ variant: 12
 
 ## Инфраструктура
 
-<div class="flow infra">
-  <div class="card" v-click="1"><div class="ico"><logos-nodejs-icon /></div>Node поднимает браузер</div>
-  <div class="arrow" v-click="2">→</div>
-  <div class="card ok" v-click="2"><div class="ico"><logos-chrome /></div>браузер учит сеть</div>
-  <div class="arrow" v-click="3">→</div>
-  <div class="card" v-click="3"><div class="ico"><tabler-package /></div>отдаёт веса обратно в Node, а тот пишет их</div>
+<div class="pipe">
+  <div class="tile" v-click="1">
+    <div class="big-ico"><logos-nodejs-icon /></div>
+    <div class="title">Node</div>
+    <div class="cap">поднимает браузер</div>
+  </div>
+  <div class="arrow" v-click="2"><tabler-arrow-right /></div>
+  <div class="tile ok" v-click="2">
+    <div class="big-ico"><logos-chrome /></div>
+    <div class="title">Браузер</div>
+    <div class="cap">учит сеть на видеокарте</div>
+  </div>
+  <div class="arrow" v-click="3"><tabler-arrow-right /></div>
+  <div class="tile" v-click="3">
+    <div class="big-ico cyan"><tabler-package /></div>
+    <div class="title">Веса</div>
+    <div class="cap">возвращаются в Node и ложатся в файлы</div>
+  </div>
 </div>
 
 <div v-click="4" class="speed">
@@ -127,11 +201,46 @@ variant: 12
 </div>
 
 <style scoped>
-.infra .card {
-  flex: 1;
+.pipe {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 0.8rem;
 }
-.infra .ico {
-  font-size: 2.4rem;
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.4rem;
+  min-height: 210px;
+  justify-content: center;
+  padding: 1.4rem 1rem;
+  border-radius: 20px;
+  background: var(--dd-card-bg);
+  border: 1px solid var(--dd-card-border);
+}
+.tile.ok {
+  border: 2px solid var(--color-green);
+  background: linear-gradient(180deg, rgba(86, 255, 113, 0.14), var(--dd-card-bg) 60%);
+  box-shadow: 0 0 32px rgba(86, 255, 113, 0.25);
+}
+.big-ico {
+  font-size: 4rem;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.cap {
+  color: var(--dd-sub);
+}
+.arrow {
+  font-size: 2.2rem;
+  color: var(--dd-sub);
 }
 .speed {
   display: flex;
