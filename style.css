@@ -1,0 +1,158 @@
+/* Глобальные стили колоды. Инжектятся в корень, поэтому всё под .slidev-layout,
+   чтобы не течь в presenter UI. Минимальный шрифт доклада — 16px (1rem). */
+
+/* тема даёт 14px для тела и кода — поднимаем до 18px */
+:root {
+  --font-regular-text-size: 1.125rem;
+  --dd-red: #ff6b6b;
+  --dd-card-bg: rgba(255, 255, 255, 0.06);
+  --dd-card-border: rgba(255, 255, 255, 0.16);
+  --dd-sub: rgba(255, 255, 255, 0.62);
+}
+
+.slidev-layout h2 {
+  font-size: 2.25rem;
+}
+
+.slidev-layout .sub {
+  color: var(--dd-sub);
+}
+.slidev-layout .accent {
+  color: var(--color-green);
+}
+.slidev-layout .cyan {
+  color: var(--color-cyan);
+}
+.slidev-layout .bad {
+  color: var(--dd-red);
+}
+.slidev-layout .gnum {
+  font-weight: 800;
+  line-height: 1;
+  background: var(--color-accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* карточки вместо списков */
+.slidev-layout .cards {
+  display: grid;
+  gap: 1rem;
+}
+.slidev-layout .card {
+  background: var(--dd-card-bg);
+  border: 1px solid var(--dd-card-border);
+  border-radius: 14px;
+  padding: 0.9rem 1.1rem;
+}
+.slidev-layout .card .ico {
+  font-size: 2rem;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+.slidev-layout .card b,
+.slidev-layout .card strong {
+  color: var(--color-cyan);
+}
+/* иконки Tabler — линейные, цветом акцента карточки (цветные logos-* задают свои цвета сами) */
+.slidev-layout .card .ico {
+  color: var(--color-cyan);
+}
+.slidev-layout .card.ok .ico {
+  color: var(--color-green);
+}
+.slidev-layout .card.no .ico {
+  color: var(--dd-red);
+}
+.slidev-layout .card.ok {
+  border-color: var(--color-green);
+}
+.slidev-layout .card.no {
+  border-color: rgba(255, 107, 107, 0.6);
+}
+
+/* крупная цифра + подпись */
+.slidev-layout .stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.slidev-layout .stat .gnum {
+  font-size: 3rem;
+}
+
+/* цепочка шагов со стрелками */
+.slidev-layout .flow {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+.slidev-layout .flow .arrow {
+  align-self: center;
+  font-size: 1.5rem;
+  color: var(--color-cyan);
+}
+
+/* скриншоты компонентов сняты в 10× (deviceScaleFactor 10, запас под 4K и ультраширокие экраны) и уменьшаются браузером — без пикселизации */
+.slidev-layout .pix {
+  border-radius: 6px;
+}
+
+/* «по-умному» — строка с терминами внизу слайда */
+.slidev-layout .smart {
+  margin-top: auto;
+  font-size: 1rem;
+  color: var(--dd-sub);
+}
+.slidev-layout .smart code {
+  font-size: 1rem !important;
+}
+
+/* таблицы */
+.slidev-layout table {
+  border-collapse: collapse;
+}
+.slidev-layout th,
+.slidev-layout td {
+  font-size: 1.125rem;
+  padding: 0.35rem 0.9rem;
+  border-bottom: 1px solid var(--dd-card-border);
+  text-align: left;
+}
+.slidev-layout th {
+  color: var(--color-cyan);
+  font-weight: 600;
+}
+
+/* лог консоли с переносом строк */
+.slidev-layout .log {
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 1rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid var(--dd-card-border);
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+}
+.slidev-layout pre.log {
+  font-family: "JetBrains Mono", Consolas, monospace !important;
+  font-size: 1rem !important;
+  line-height: 1.45 !important;
+  margin: 0;
+}
+.slidev-layout .ico-i {
+  font-size: 1.3rem;
+  color: var(--color-cyan);
+  vertical-align: -0.15em;
+}
+.slidev-layout .log div {
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.slidev-layout code {
+  color: var(--color-green-soft);
+}
