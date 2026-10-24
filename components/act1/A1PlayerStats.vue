@@ -11,10 +11,10 @@ const CELLS = 10;
 
 // для каждой шкалы: [клик, сколько клеток с этого клика]
 const STATS: { key: string; label: string; color: string; grow: [number, number][] }[] = [
-	{ key: "fe", label: "FRONTEND", color: "var(--pa-cyan)", grow: [[1, 10]] },
-	{ key: "ml", label: "ML / DS", color: "var(--pa-magenta)", grow: [[2, 4], [3, 6], [5, 8]] },
-	{ key: "pc", label: "COMMUNITY", color: "var(--pa-yellow)", grow: [[4, 8]] },
-	{ key: "vue", label: "VUE", color: "var(--pa-lime)", grow: [[6, 10]] },
+	{ key: "fe", label: "FRONTEND", color: "var(--pa-cyan)", grow: [[1, 8]] },
+	{ key: "ml", label: "ML / DS", color: "var(--pa-magenta)", grow: [[2, 3], [3, 5], [5, 6]] },
+	{ key: "pc", label: "COMMUNITY", color: "var(--pa-yellow)", grow: [[4, 10]] },
+	{ key: "vue", label: "VUE", color: "var(--pa-lime)", grow: [[6, 7]] },
 ];
 
 const rows = computed(() =>
