@@ -1,6 +1,9 @@
 <script setup lang="ts">
 // Настоящий рендер карточки с мутацией letter-spacing. Поверх: bbox отличий (step 1),
 // окна 64×64 с шагом 48 (step 2), полоса перекрытия 16px (step 3), голоса окон (step 4).
+// Аркадный вид: рендер в рамке «экрана», bbox — «бегущие муравьи» пиксельным пунктиром,
+// окна — прицелы-рамки, по очереди выпрыгивающие на экран, голоса — пиксельные таблички.
+// Геометрия (координаты, размеры, шаг, перекрытие) та же, что в оригинале.
 const props = defineProps<{ step: number }>();
 
 const SCALE = 1.35;
@@ -18,23 +21,23 @@ const s = (n: number) => `${n * SCALE}px`;
 
 <template>
   <div class="wo">
-    <div class="stage" :style="{ width: s(504), height: s(183) }">
-      <img src="/images/dd/card-render.png" class="pix" :style="{ width: s(504) }" alt="Карточка после мутации letter-spacing">
-      <div v-if="step >= 1" class="bbox" :style="{ left: s(BBOX.x0), top: s(BBOX.y0), width: s(BBOX.x1 - BBOX.x0), height: s(BBOX.y1 - BBOX.y0) }" />
+    <div class="wo-stage" :style="{ width: s(504), height: s(183) }">
+      <img src="/images/dd/card-render.png" class="pix wo-img" :style="{ width: s(504) }" alt="Карточка после мутации letter-spacing">
+      <div v-if="step >= 1" class="wo-bbox" :style="{ left: s(BBOX.x0), top: s(BBOX.y0), width: s(BBOX.x1 - BBOX.x0), height: s(BBOX.y1 - BBOX.y0) }" />
       <template v-if="step >= 2">
         <div
           v-for="(w, i) in wins"
           :key="i"
-          class="win"
-          :class="{ odd: i % 2 }"
+          class="wo-win"
+          :class="{ 'wo-odd': i % 2 }"
           :style="{ left: s(w.x), top: s(w.y), width: s(WIN), height: s(WIN), '--d': `${i * 60}ms` }"
         >
-          <span v-if="step >= 4" class="vote">{{ w.v.toFixed(2) }}</span>
+          <span v-if="step >= 4" class="wo-vote" :style="{ '--d': `${i * 40}ms` }">{{ w.v.toFixed(2) }}</span>
         </div>
       </template>
-      <div v-if="step >= 3" class="overlap" :style="{ left: s(BBOX.x0 + STRIDE), top: s(ROW_Y + 8), width: s(WIN - STRIDE), height: s(WIN - 8) }" />
+      <div v-if="step >= 3" class="wo-overlap" :style="{ left: s(BBOX.x0 + STRIDE), top: s(ROW_Y + 8), width: s(WIN - STRIDE), height: s(WIN - 8) }" />
     </div>
-    <div v-if="step >= 4" class="avg">
+    <div v-if="step >= 4" class="wo-avg">
       ⌀ <b>{{ avg.toFixed(2) }}</b> <code>letter-spacing</code>
     </div>
   </div>
@@ -46,56 +49,184 @@ const s = (n: number) => `${n * SCALE}px`;
   flex-direction: column;
   gap: 0.6rem;
 }
-.stage {
+.wo-stage {
   position: relative;
 }
-.bbox {
+
+/* ---------- bbox: «бегущие муравьи» из пиксельных штрихов ---------- */
+.wo-bbox {
   position: absolute;
-  border: 3px dashed #ff6b6b;
-  border-radius: 4px;
+  --ant: #ff4d6d;
+  background:
+    repeating-linear-gradient(90deg, var(--ant) 0 8px, transparent 8px 14px) top left / 100% 3px no-repeat,
+    repeating-linear-gradient(90deg, var(--ant) 0 8px, transparent 8px 14px) bottom left / 100% 3px no-repeat,
+    repeating-linear-gradient(0deg, var(--ant) 0 8px, transparent 8px 14px) top left / 3px 100% no-repeat,
+    repeating-linear-gradient(0deg, var(--ant) 0 8px, transparent 8px 14px) top right / 3px 100% no-repeat;
+  filter: drop-shadow(0 0 3px rgba(255, 77, 109, 0.8));
+  animation:
+    wo-in 0.3s steps(3, end) both,
+    wo-ants 0.7s steps(7, end) 0.3s infinite;
 }
-.win {
+
+/* ---------- окна: прицельные рамки ---------- */
+.wo-win {
   position: absolute;
-  border: 2px solid var(--color-cyan);
-  background: rgba(98, 236, 255, 0.08);
   box-sizing: border-box;
-  animation: pop 0.3s var(--d) both;
+  --wc: var(--color-cyan);
+  border: 3px solid var(--wc);
+  background: color-mix(in srgb, var(--wc) 10%, transparent);
+  box-shadow:
+    0 0 8px 1px color-mix(in srgb, var(--wc) 55%, transparent),
+    inset 0 0 0 1px rgba(7, 4, 15, 0.6);
+  animation: wo-pop 0.27s steps(3, end) var(--d) both;
 }
-.win.odd {
-  border-color: #ffd36b;
-  background: rgba(255, 211, 107, 0.08);
+.wo-win.wo-odd {
+  --wc: var(--pa-yellow);
 }
-.win.odd .vote {
-  top: auto;
-  bottom: -1.9rem;
-}
-.overlap {
+/* пиксельные «уголки» поверх рамки окна */
+.wo-win::before {
+  content: "";
   position: absolute;
-  background: rgba(86, 255, 113, 0.45);
-  outline: 2px solid var(--color-green);
+  inset: -6px;
+  background:
+    linear-gradient(var(--wc), var(--wc)) top left / 9px 3px no-repeat,
+    linear-gradient(var(--wc), var(--wc)) top left / 3px 9px no-repeat,
+    linear-gradient(var(--wc), var(--wc)) top right / 9px 3px no-repeat,
+    linear-gradient(var(--wc), var(--wc)) top right / 3px 9px no-repeat,
+    linear-gradient(var(--wc), var(--wc)) bottom left / 9px 3px no-repeat,
+    linear-gradient(var(--wc), var(--wc)) bottom left / 3px 9px no-repeat,
+    linear-gradient(var(--wc), var(--wc)) bottom right / 9px 3px no-repeat,
+    linear-gradient(var(--wc), var(--wc)) bottom right / 3px 9px no-repeat;
 }
-.vote {
+
+/* ---------- перекрытие 16px ---------- */
+.wo-overlap {
   position: absolute;
-  top: -1.9rem;
+  background: repeating-linear-gradient(
+    45deg,
+    color-mix(in srgb, var(--color-green) 75%, transparent) 0 4px,
+    color-mix(in srgb, var(--color-green) 35%, transparent) 4px 8px
+  );
+  outline: 3px solid var(--color-green);
+  box-shadow: 0 0 12px 2px color-mix(in srgb, var(--color-green) 60%, transparent);
+  animation: wo-blink 0.6s steps(1, end) both;
+}
+
+/* ---------- голоса ---------- */
+.wo-vote {
+  position: absolute;
+  top: -2rem;
   left: 50%;
   transform: translateX(-50%);
+  font-family: var(--pa-font-display);
   font-size: 1rem;
-  font-weight: 700;
-  color: var(--color-cyan);
-  background: rgba(0, 0, 0, 0.7);
-  padding: 0 0.3rem;
-  border-radius: 4px;
+  line-height: 1;
+  padding: 0.25rem 0.3rem;
+  color: var(--wc);
+  background: #07040f;
+  box-shadow:
+    0 -2px 0 0 var(--wc),
+    0 2px 0 0 var(--wc),
+    -2px 0 0 0 var(--wc),
+    2px 0 0 0 var(--wc);
+  white-space: nowrap;
+  animation: wo-vote 0.24s steps(2, end) calc(var(--d) + 0.1s) both;
 }
-.avg {
+.wo-odd .wo-vote {
+  top: auto;
+  bottom: -2rem;
+}
+
+/* ---------- итог голосования ---------- */
+.wo-avg {
+  /* обычный строчный поток, а не flex: фраза «⌀ 0.84 letter-spacing» остаётся одной строкой текста */
+  align-self: flex-start;
   font-size: 1.4rem;
+  line-height: 1.3;
+  padding: 0.05rem 0.8rem;
+  background: rgba(16, 10, 34, 0.9);
+  box-shadow:
+    0 -3px 0 0 var(--color-green),
+    0 3px 0 0 var(--color-green),
+    -3px 0 0 0 var(--color-green),
+    3px 0 0 0 var(--color-green);
+  animation: wo-in 0.3s steps(3, end) 0.25s both;
 }
-.avg b {
+.wo-avg b {
+  font-family: var(--pa-font-display);
+  font-weight: 400;
+  font-size: 1.25rem;
   color: var(--color-green);
+  text-shadow: 0 0 0.6rem color-mix(in srgb, var(--color-green) 60%, transparent);
 }
-@keyframes pop {
+
+@keyframes wo-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes wo-ants {
+  from {
+    background-position:
+      0 0,
+      0 100%,
+      0 0,
+      100% 0;
+  }
+  to {
+    background-position:
+      14px 0,
+      -14px 100%,
+      0 -14px,
+      100% 14px;
+  }
+}
+@keyframes wo-pop {
   from {
     opacity: 0;
     transform: scale(0.6);
+  }
+}
+@keyframes wo-vote {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+}
+@keyframes wo-blink {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  75%,
+  100% {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wo-bbox,
+  .wo-win,
+  .wo-overlap,
+  .wo-vote,
+  .wo-avg {
+    animation: none;
+  }
+}
+@media print {
+  .wo-bbox,
+  .wo-win,
+  .wo-overlap,
+  .wo-vote,
+  .wo-avg {
+    animation: none;
   }
 }
 </style>

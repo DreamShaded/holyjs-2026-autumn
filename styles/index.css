@@ -1,0 +1,292 @@
+/* Аркадная дизайн-система «неоновый пиксель-арт»: шрифты, токены, базовая типографика,
+   каркас слайда и переходы. Классы контента (.card, .tile, .flow, .log …) — в ../style.css.
+   Минимальный кегль доклада — 1rem (16px), ниже не опускаемся нигде. */
+
+/* Шрифты лежат в npm-пакетах @fontsource (OFL-1.1, с кириллицей) и попадают в сборку:
+   показ работает офлайн. */
+@import "@fontsource/press-start-2p/400.css";
+/* Handjet — вариативный (wght 100–900), один файл на подмножество */
+@import "@fontsource-variable/handjet/wght.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/400-italic.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/700.css";
+
+:root {
+  /* палитра */
+  --pa-bg: #07040f;
+  --pa-bg-2: #0e0820;
+  --pa-panel: rgba(16, 10, 34, 0.86);
+  --pa-panel-solid: #100a22;
+  --pa-line: #3a3160;
+  --pa-text: #f2ecff;
+  --pa-text-dim: #b9b0d6; /* 10.4:1 к фону */
+  --pa-cyan: #3ef0ff;
+  --pa-magenta: #ff3ecf;
+  --pa-lime: #9dff3e;
+  --pa-yellow: #ffe13e;
+  --pa-red: #ff4d6d;
+  --pa-orange: #ff9f3e;
+
+  /* шрифты: Press Start 2P — только короткие крупные строки (титул, LEVEL, SCORE);
+     Handjet — заголовки, лейблы, названия уровней: пиксельный, узкий, с однозначной кириллицей
+     (Pixelify Sans отклонён: «д» читалась как «а», «С» как «О», см. отчёт 03);
+     JetBrains Mono — основной текст и код */
+  --pa-font-display: "Press Start 2P", "Handjet Variable", monospace;
+  --pa-font-pixel: "Handjet Variable", "JetBrains Mono", sans-serif;
+  --pa-font-body: "JetBrains Mono", ui-monospace, Consolas, monospace;
+
+  /* пиксель рамки */
+  --pa-px: 3px;
+
+  /* акцент уровня по умолчанию; layout'ы и слои переопределяют его от level */
+  --lvl-accent: var(--pa-cyan);
+  --lvl-accent2: var(--pa-magenta);
+
+  /* кегли */
+  --font-h1-size: 2.25rem;
+  --font-h2-size: 2.5rem;
+  --font-h3-size: 1.625rem;
+  --font-h4-size: 1.375rem;
+
+  /* переменные, на которые опирается разметка слайдов (имена из темы оригинала) */
+  --color-green: var(--pa-lime);
+  --color-cyan: var(--pa-cyan);
+  --color-green-soft: #c9ff94;
+  --color-cyan-soft: #b3f8ff;
+  --color-accent-gradient: linear-gradient(
+    180deg,
+    var(--pa-yellow) 0 34%,
+    #ffa53e 34% 52%,
+    var(--pa-magenta) 52% 74%,
+    #b04cff 74% 100%
+  );
+
+  /* переменные Slidev */
+  --slidev-theme-primary: var(--pa-cyan);
+  --slidev-slide-container-background: var(--pa-bg);
+  --slidev-code-background: #0b0718;
+  --slidev-code-foreground: var(--pa-text);
+  --slidev-code-font-family: var(--pa-font-body);
+  --slidev-code-font-size: 1rem;
+  --slidev-code-line-height: 1.38;
+  --slidev-code-padding: 0.75rem 1.1rem;
+  --slidev-code-radius: 0;
+  --slidev-code-margin: 0;
+  --slidev-transition-duration: 0.45s;
+}
+
+html.dark {
+  --slidev-code-background: #0b0718;
+  --slidev-code-foreground: var(--pa-text);
+}
+
+/* ---------- каркас слайда ---------- */
+
+#slide-content {
+  background: var(--pa-bg);
+}
+
+.slidev-layout {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  /* сверху HUD (2.25rem) + воздух; область контента ≈ 467px */
+  padding: 3.25rem 3.5rem 2rem;
+  color: var(--pa-text);
+  background: transparent;
+  font-family: var(--pa-font-body);
+  font-size: var(--font-regular-text-size);
+  line-height: 1.5;
+  /* без лигатур JetBrains Mono: «=>» в тексте слайдов остаётся двумя символами, как в оригинале */
+  font-variant-ligatures: none;
+  /* JetBrains Mono шире гротеска оригинала: чуть сжимаем трекинг, кегль не трогаем */
+  letter-spacing: -0.015em;
+}
+
+.slidev-layout ::selection {
+  background: var(--lvl-accent);
+  color: var(--pa-bg);
+}
+
+/* ---------- типографика ---------- */
+
+.slidev-layout h1 {
+  font-family: var(--pa-font-display);
+  font-weight: 400;
+  font-size: var(--font-h1-size);
+  line-height: 1.3;
+  margin: 0 0 1rem;
+  color: var(--pa-text);
+  text-shadow:
+    0.1875rem 0.1875rem 0 var(--lvl-accent2),
+    0 0 1.25rem color-mix(in srgb, var(--lvl-accent) 55%, transparent);
+}
+
+.slidev-layout h2 {
+  font-family: var(--pa-font-pixel);
+  font-weight: 600;
+  font-size: var(--font-h2-size);
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  margin: 0 0 0.8rem;
+  color: var(--pa-text);
+  text-shadow:
+    0.1875rem 0.1875rem 0 color-mix(in srgb, var(--lvl-accent) 55%, #07040f),
+    0 0 1rem color-mix(in srgb, var(--lvl-accent) 35%, transparent);
+}
+
+.slidev-layout h3 {
+  font-family: var(--pa-font-pixel);
+  font-weight: 600;
+  font-size: var(--font-h3-size);
+  line-height: 1.3;
+  margin-bottom: 0.6rem;
+  color: var(--lvl-accent);
+}
+
+.slidev-layout h4,
+.slidev-layout h5,
+.slidev-layout h6 {
+  font-family: var(--pa-font-pixel);
+  font-weight: 600;
+  font-size: var(--font-h4-size);
+  line-height: 1.4;
+  margin-bottom: 0.6rem;
+  opacity: 1;
+}
+
+/* как в теме оригинала: текстовые блоки не наследуют кегль, а берут базовый —
+   на это опираются размеры в разметке слайдов */
+.slidev-layout p,
+.slidev-layout li,
+.slidev-layout div {
+  font-family: var(--pa-font-body);
+  font-size: var(--font-regular-text-size);
+  line-height: 1.5;
+}
+
+.slidev-layout p {
+  margin: 0.6rem 0;
+}
+
+.slidev-layout b,
+.slidev-layout strong {
+  font-weight: 700;
+}
+
+.slidev-layout a {
+  color: var(--pa-cyan);
+  border-bottom: 2px dashed currentColor;
+}
+
+/* маркированные списки: пиксельный квадрат цвета уровня */
+.slidev-layout ul {
+  list-style: none;
+  padding-left: 0.25rem;
+}
+.slidev-layout ul li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+.slidev-layout ul li::before {
+  content: "";
+  position: absolute;
+  left: 0.2rem;
+  top: 0.62em;
+  width: 0.45rem;
+  height: 0.45rem;
+  background: var(--lvl-accent);
+  box-shadow:
+    0.15rem 0.15rem 0 color-mix(in srgb, var(--lvl-accent) 35%, #07040f),
+    0 0 0.4rem color-mix(in srgb, var(--lvl-accent) 60%, transparent);
+}
+.slidev-layout ol {
+  padding-left: 1.5rem;
+}
+.slidev-layout ol li::marker {
+  font-family: var(--pa-font-pixel);
+  color: var(--lvl-accent);
+}
+
+/* ---------- код ---------- */
+
+.slidev-layout pre,
+.slidev-layout code,
+.slidev-code span {
+  font-family: var(--pa-font-body);
+  /* без лигатур: «=>» в коде должно выглядеть как в редакторе зрителя */
+  font-variant-ligatures: none;
+}
+
+.slidev-layout .slidev-code-wrapper {
+  position: relative;
+  margin: 0 !important;
+  background: var(--slidev-code-background);
+  box-shadow:
+    0 calc(-1 * var(--pa-px)) 0 0 var(--pa-line),
+    0 var(--pa-px) 0 0 var(--pa-line),
+    calc(-1 * var(--pa-px)) 0 0 0 var(--pa-line),
+    var(--pa-px) 0 0 0 var(--pa-line),
+    0 0 1.5rem -0.25rem color-mix(in srgb, var(--lvl-accent) 30%, transparent);
+}
+/* полоска «окна» над кодом: чисто декоративная, вне потока */
+.slidev-layout .slidev-code-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--pa-px);
+  background: repeating-linear-gradient(90deg, var(--lvl-accent) 0 9px, transparent 9px 12px);
+  opacity: 0.7;
+}
+
+.slidev-layout .slidev-code {
+  font-size: 1rem !important;
+  line-height: 1.38 !important;
+  letter-spacing: 0 !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+}
+.slidev-layout .slidev-code span {
+  font-size: 1rem !important;
+  line-height: 1.38 !important;
+}
+.slidev-code .slidev-code-dishonored {
+  opacity: 0.32;
+}
+
+.slidev-layout :not(pre) > code {
+  font-family: var(--pa-font-body);
+  font-size: max(1rem, 0.95em);
+  padding: 0.05em 0.35em;
+  border-radius: 0;
+  background: rgba(157, 255, 62, 0.08);
+  box-shadow: inset 0 -2px 0 rgba(157, 255, 62, 0.28);
+}
+.slidev-layout :not(pre) > code::before,
+.slidev-layout :not(pre) > code::after {
+  content: none;
+}
+
+/* ---------- переходы ---------- */
+
+/* level-up: на границе уровней слайд гаснет и проявляется ступенями, поверх играет
+   пиксельное растворение из global-top.vue */
+.level-up-enter-active,
+.level-up-leave-active {
+  transition: opacity 0.5s steps(5, end);
+}
+.level-up-enter-from,
+.level-up-leave-to {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .level-up-enter-active,
+  .level-up-leave-active {
+    transition: none;
+  }
+}

@@ -1,17 +1,18 @@
-/* Глобальные стили колоды. Инжектятся в корень, поэтому всё под .slidev-layout,
-   чтобы не течь в presenter UI. Минимальный шрифт доклада — 16px (1rem). */
+/* Глобальные классы контента в аркадном стиле. Инжектятся в корень, поэтому всё под .slidev-layout,
+   чтобы не течь в presenter UI. Имена классов и переменных те же, что в оригинале: на них
+   опирается разметка всех актов. Минимальный шрифт доклада — 16px (1rem).
+   Пиксельная рамка = четыре сдвинутые тени без углов: получаются «ступенчатые» углы. */
 
-/* тема даёт 14px для тела и кода — поднимаем до 18px */
 :root {
   --font-regular-text-size: 1.125rem;
-  --dd-red: #ff6b6b;
-  --dd-card-bg: rgba(255, 255, 255, 0.06);
-  --dd-card-border: rgba(255, 255, 255, 0.16);
-  --dd-sub: rgba(255, 255, 255, 0.62);
+  --dd-red: var(--pa-red);
+  --dd-card-bg: rgba(18, 11, 38, 0.84);
+  --dd-card-border: #3a3160;
+  --dd-sub: var(--pa-text-dim);
 }
 
 .slidev-layout h2 {
-  font-size: 2.25rem;
+  font-size: 2.5rem;
 }
 
 .slidev-layout .sub {
@@ -26,25 +27,49 @@
 .slidev-layout .bad {
   color: var(--dd-red);
 }
+/* крупные цифры: пиксельный шрифт, полосатая «аркадная» заливка */
 .slidev-layout .gnum {
-  font-weight: 800;
+  font-family: var(--pa-font-pixel);
+  font-weight: 700;
   line-height: 1;
   background: var(--color-accent-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0.1875rem 0.1875rem 0 rgba(176, 76, 255, 0.45));
 }
 
-/* карточки вместо списков */
+/* ---------- карточки ---------- */
+
 .slidev-layout .cards {
   display: grid;
-  gap: 1rem;
+  gap: 0.875rem;
 }
 .slidev-layout .card {
+  --pa-frame: var(--dd-card-border);
+  position: relative;
   background: var(--dd-card-bg);
-  border: 1px solid var(--dd-card-border);
-  border-radius: 14px;
-  padding: 0.9rem 1.1rem;
+  border: 0;
+  border-radius: 0;
+  padding: 0.75rem 1rem;
+  box-shadow:
+    0 calc(-1 * var(--pa-px)) 0 0 var(--pa-frame),
+    0 var(--pa-px) 0 0 var(--pa-frame),
+    calc(-1 * var(--pa-px)) 0 0 0 var(--pa-frame),
+    var(--pa-px) 0 0 0 var(--pa-frame),
+    inset 0 var(--pa-px) 0 0 rgba(255, 255, 255, 0.05),
+    inset 0 calc(-1 * var(--pa-px)) 0 0 rgba(0, 0, 0, 0.35);
+}
+/* уголок-«заклёпка» цвета уровня: декоративный, вне потока */
+.slidev-layout .card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 6px;
+  height: 6px;
+  background: color-mix(in srgb, var(--pa-frame) 70%, var(--lvl-accent));
+  opacity: 0.8;
 }
 .slidev-layout .card .ico {
   font-size: 2rem;
@@ -58,18 +83,30 @@
 /* иконки Tabler — линейные, цветом акцента карточки (цветные logos-* задают свои цвета сами) */
 .slidev-layout .card .ico {
   color: var(--color-cyan);
+  filter: drop-shadow(0 0 0.35rem color-mix(in srgb, var(--color-cyan) 45%, transparent));
 }
 .slidev-layout .card.ok .ico {
   color: var(--color-green);
+  filter: drop-shadow(0 0 0.35rem rgba(157, 255, 62, 0.5));
 }
 .slidev-layout .card.no .ico {
   color: var(--dd-red);
+  filter: drop-shadow(0 0 0.35rem rgba(255, 77, 109, 0.5));
 }
 .slidev-layout .card.ok {
-  border-color: var(--color-green);
+  --pa-frame: var(--color-green);
+  background: linear-gradient(180deg, rgba(157, 255, 62, 0.1), var(--dd-card-bg) 70%);
+  box-shadow:
+    0 calc(-1 * var(--pa-px)) 0 0 var(--pa-frame),
+    0 var(--pa-px) 0 0 var(--pa-frame),
+    calc(-1 * var(--pa-px)) 0 0 0 var(--pa-frame),
+    var(--pa-px) 0 0 0 var(--pa-frame),
+    0 0 1.4rem -0.2rem rgba(157, 255, 62, 0.45),
+    inset 0 var(--pa-px) 0 0 rgba(255, 255, 255, 0.06);
 }
 .slidev-layout .card.no {
-  border-color: rgba(255, 107, 107, 0.6);
+  --pa-frame: rgba(255, 77, 109, 0.75);
+  background: linear-gradient(180deg, rgba(255, 77, 109, 0.1), var(--dd-card-bg) 70%);
 }
 
 /* крупная цифра + подпись */
@@ -82,25 +119,51 @@
   font-size: 3rem;
 }
 
-/* крупные плитки: градиент сверху, у .ok — зелёная рамка со свечением */
+/* ---------- плитки ---------- */
+
+/* окно с толстой рамкой и «полосой заголовка» сверху; .ok — лайм со свечением, .no — красный */
 .slidev-layout .tile {
+  --pa-frame: var(--dd-card-border);
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
   padding: 1.4rem;
-  border-radius: 20px;
+  border: 0;
+  border-radius: 0;
   background: var(--dd-card-bg);
-  border: 1px solid var(--dd-card-border);
+  box-shadow:
+    0 -4px 0 0 var(--pa-frame),
+    0 4px 0 0 var(--pa-frame),
+    -4px 0 0 0 var(--pa-frame),
+    4px 0 0 0 var(--pa-frame),
+    inset 0 4px 0 0 rgba(255, 255, 255, 0.05),
+    inset 0 -4px 0 0 rgba(0, 0, 0, 0.35);
+}
+.slidev-layout .tile::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: repeating-linear-gradient(90deg, var(--pa-frame) 0 6px, transparent 6px 9px);
+  opacity: 0.55;
 }
 .slidev-layout .tile.no {
-  border-color: rgba(255, 107, 107, 0.6);
-  background: linear-gradient(180deg, rgba(255, 107, 107, 0.12), var(--dd-card-bg) 60%);
+  --pa-frame: rgba(255, 77, 109, 0.8);
+  background: linear-gradient(180deg, rgba(255, 77, 109, 0.14), var(--dd-card-bg) 60%);
 }
 .slidev-layout .tile.ok {
-  border: 2px solid var(--color-green);
-  background: linear-gradient(180deg, rgba(86, 255, 113, 0.14), var(--dd-card-bg) 60%);
-  box-shadow: 0 0 32px rgba(86, 255, 113, 0.25);
+  --pa-frame: var(--color-green);
+  background: linear-gradient(180deg, rgba(157, 255, 62, 0.16), var(--dd-card-bg) 60%);
+  box-shadow:
+    0 -4px 0 0 var(--pa-frame),
+    0 4px 0 0 var(--pa-frame),
+    -4px 0 0 0 var(--pa-frame),
+    4px 0 0 0 var(--pa-frame),
+    0 0 2rem 0 rgba(157, 255, 62, 0.3),
+    inset 0 4px 0 0 rgba(255, 255, 255, 0.06);
 }
 .slidev-layout .tile .hero {
   display: flex;
@@ -114,15 +177,19 @@
   font-size: 2.6rem;
   line-height: 1;
   color: var(--color-cyan);
+  filter: drop-shadow(0 0 0.4rem color-mix(in srgb, var(--color-cyan) 45%, transparent));
 }
 .slidev-layout .tile.ok .t-ico {
   color: var(--color-green);
+  filter: drop-shadow(0 0 0.4rem rgba(157, 255, 62, 0.5));
 }
 .slidev-layout .tile.no .t-ico {
   color: var(--dd-red);
+  filter: drop-shadow(0 0 0.4rem rgba(255, 77, 109, 0.5));
 }
 
-/* цепочка шагов со стрелками */
+/* ---------- цепочка шагов ---------- */
+
 .slidev-layout .flow {
   display: flex;
   align-items: stretch;
@@ -131,12 +198,34 @@
 .slidev-layout .flow .arrow {
   align-self: center;
   font-size: 1.5rem;
-  color: var(--color-cyan);
+  font-weight: 700;
+  color: var(--lvl-accent);
+  text-shadow: 0 0 0.6rem var(--lvl-accent);
+  animation: pa-arrow 1.2s steps(2, jump-none) infinite;
+}
+@keyframes pa-arrow {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(3px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .slidev-layout .flow .arrow {
+    animation: none;
+  }
 }
 
-/* скриншоты компонентов сняты в 10× (deviceScaleFactor 10, запас под 4K и ультраширокие экраны) и уменьшаются браузером — без пикселизации */
+/* скриншоты компонентов сняты в 10× (deviceScaleFactor 10, запас под 4K и ультраширокие экраны)
+   и уменьшаются браузером — без пикселизации; рамка в стиле окна */
 .slidev-layout .pix {
-  border-radius: 6px;
+  border-radius: 0;
+  box-shadow:
+    0 -3px 0 0 var(--pa-line),
+    0 3px 0 0 var(--pa-line),
+    -3px 0 0 0 var(--pa-line),
+    3px 0 0 0 var(--pa-line);
 }
 
 /* «по-умному» — строка с терминами внизу слайда */
@@ -149,36 +238,59 @@
   font-size: 1rem !important;
 }
 
-/* таблицы */
+/* ---------- таблицы: табло рекордов ---------- */
+
 .slidev-layout table {
   border-collapse: collapse;
+  /* подложка: таблица читается поверх сцены уровня */
+  background: rgba(7, 4, 15, 0.62);
+}
+.slidev-layout tr {
+  border: 0;
 }
 .slidev-layout th,
 .slidev-layout td {
   font-size: 1.125rem;
   padding: 0.35rem 0.9rem;
-  border-bottom: 1px solid var(--dd-card-border);
+  border-bottom: 2px dashed var(--dd-card-border);
   text-align: left;
 }
 .slidev-layout th {
-  color: var(--color-cyan);
+  font-family: var(--pa-font-pixel);
+  font-size: 1.25rem;
   font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--color-cyan);
+  border-bottom: 3px solid color-mix(in srgb, var(--color-cyan) 60%, transparent);
+}
+.slidev-layout tbody tr:nth-child(odd) td {
+  background: rgba(255, 255, 255, 0.025);
 }
 
-/* лог консоли с переносом строк */
+/* ---------- лог консоли: терминал ---------- */
+
 .slidev-layout .log {
-  font-family: "JetBrains Mono", Consolas, monospace;
+  font-family: var(--pa-font-body);
   font-size: 1rem;
   line-height: 1.55;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  background: rgba(0, 0, 0, 0.55);
-  border: 1px solid var(--dd-card-border);
-  border-radius: 12px;
+  color: #d9ffd0;
+  background: rgba(3, 6, 4, 0.88);
+  border: 0;
+  border-radius: 0;
   padding: 0.8rem 1rem;
+  box-shadow:
+    0 -3px 0 0 #2f5a32,
+    0 3px 0 0 #2f5a32,
+    -3px 0 0 0 #2f5a32,
+    3px 0 0 0 #2f5a32,
+    0 0 1.2rem -0.3rem rgba(157, 255, 62, 0.35),
+    inset 0 0 2rem rgba(157, 255, 62, 0.05);
+  text-shadow: 0 0 0.35rem rgba(157, 255, 62, 0.35);
 }
 .slidev-layout pre.log {
-  font-family: "JetBrains Mono", Consolas, monospace !important;
+  font-family: var(--pa-font-body) !important;
   font-size: 1rem !important;
   line-height: 1.45 !important;
   margin: 0;
