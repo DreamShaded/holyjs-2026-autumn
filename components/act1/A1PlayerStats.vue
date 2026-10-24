@@ -12,7 +12,7 @@ const CELLS = 10;
 // для каждой шкалы: [клик, сколько клеток с этого клика]
 const STATS: { key: string; label: string; color: string; grow: [number, number][] }[] = [
 	{ key: "fe", label: "FRONTEND", color: "var(--pa-cyan)", grow: [[1, 8]] },
-	{ key: "ml", label: "ML / DS", color: "var(--pa-magenta)", grow: [[2, 3], [3, 5], [5, 6]] },
+	{ key: "ml", label: "ML / DS", color: "var(--pa-magenta)", grow: [[2, 6]] },
 	{ key: "pc", label: "COMMUNITY", color: "var(--pa-yellow)", grow: [[4, 10]] },
 	{ key: "vue", label: "VUE", color: "var(--pa-lime)", grow: [[6, 7]] },
 ];
@@ -35,7 +35,7 @@ const rows = computed(() =>
     <div v-for="r in rows" :key="r.key" class="a1-stats__row" :style="{ '--bar': r.color }">
       <span class="a1-stats__lbl">{{ r.label }}</span>
       <span class="a1-stats__bar">
-        <i v-for="c in CELLS" :key="c" :class="{ on: c <= r.filled }" :style="{ '--c': c }" />
+        <i v-for="c in CELLS" :key="c" :class="{ on: c <= r.filled }" />
       </span>
       <span class="a1-stats__max" :class="{ on: r.max }">MAX</span>
     </div>
@@ -104,9 +104,6 @@ const rows = computed(() =>
   box-shadow:
     inset 0 -3px 0 rgba(0, 0, 0, 0.3),
     0 0 6px color-mix(in srgb, var(--bar) 60%, transparent);
-  /* клетки набираются по очереди слева направо */
-  animation: a1-cell 0.06s steps(1, end) both;
-  animation-delay: calc(var(--c) * 45ms);
 }
 .a1-stats__max {
   font-family: var(--pa-font-pixel);
@@ -120,14 +117,6 @@ const rows = computed(() =>
   opacity: 1;
   animation: a1-max 0.9s steps(1, end) 0.5s 2;
 }
-@keyframes a1-cell {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
 @keyframes a1-max {
   0%,
   55% {
@@ -139,7 +128,6 @@ const rows = computed(() =>
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .a1-stats__bar i.on,
   .a1-stats__max.on {
     animation: none;
   }
