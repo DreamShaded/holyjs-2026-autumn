@@ -522,8 +522,8 @@ variant: 20
 <div class="stats">
   <div class="legend">
     <span class="lg-prop">свойство</span>
-    <span class="lg"><i class="sw prc" />в улове рыба, а не мусор</span>
-    <span class="lg"><i class="sw rcl" />поймано рыбы из озера</span>
+    <span class="lg"><i class="sw prc" /><b class="lg-name">precision</b>: в улове рыба, а не мусор</span>
+    <span class="lg"><i class="sw rcl" /><b class="lg-name">recall</b>: поймано рыбы из озера</span>
   </div>
   <div class="roster">
     <div class="fighter" :class="{ hot: $clicks === 1 }">
@@ -590,6 +590,11 @@ variant: 20
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+}
+.lg-name {
+  margin-right: -0.4rem;
+  color: var(--pa-text);
+  font-weight: 700;
 }
 /* образцы столбиков: тот же рисунок, что у статов, только лёжа */
 .sw {
