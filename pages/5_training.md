@@ -734,6 +734,10 @@ clicks: 2
 ::right::
 
 <div class="monitor" :data-step="$clicks">
+  <div class="legend" aria-hidden="true">
+    <span class="lg loss"><i />loss</span>
+    <span class="lg hits"><i />попадания</span>
+  </div>
   <div class="mon-screen">
     <LineChart
       :series="[
@@ -745,7 +749,7 @@ clicks: 2
       :height="300"
     />
     <div class="patience" aria-hidden="true"><span>PATIENCE 3</span></div>
-    <div class="crown" aria-hidden="true"><span>BEST</span></div>
+    <div class="best-ring" aria-hidden="true" />
   </div>
   <div class="judge" aria-hidden="true">
     <div class="jrow loss">
@@ -761,7 +765,8 @@ clicks: 2
 /* Сцена «монитор тренера»: справа экран обучения, слева реплики тренера пузырями.
    Под графиком табло судей по эпохам. Клик 1 — судья LOSS: лучший loss на эпохе 1,
    три эпохи без улучшения (терпение) и свисток STOP, хотя линия попаданий растёт.
-   Клик 2 — судья HITS: попадания растут до эпохи 4, корона лучшей версии там. */
+   Клик 2 — судья HITS: попадания растут до эпохи 4, лучшая версия там обведена ярким кольцом.
+   Подписи линий вынесены в легенду над экраном: на самом графике они мешали. */
 .col {
   grid-template-columns: 1fr;
 }
@@ -833,30 +838,57 @@ clicks: 2
   color: var(--pa-red);
 }
 .monitor[data-step="1"] .patience { opacity: 1; }
-/* корона лучшей версии по попаданиям: эпоха 4, y(0.74) = 20 + 0.26·236 */
-.crown {
+/* подписи линий — легенда над экраном, в зазоре под заголовком; на графике их нет */
+.mon-screen :deep(.lc-lbl) {
+  display: none;
+}
+.legend {
   position: absolute;
-  left: calc(290px - 26px);
-  top: calc(81px - 62px);
-  width: 52px;
+  left: 0;
+  top: -1.9rem;
+  display: flex;
+  gap: 1.5rem;
   opacity: 0;
-  text-align: center;
+  transition: opacity 0.3s steps(3, end);
 }
-.crown span {
-  display: inline-block;
-  padding: 0.1rem 0.3rem;
-  font-family: var(--pa-font-display);
-  font-size: 1rem;
+.monitor:not([data-step="0"]) .legend { opacity: 1; }
+.lg {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--pa-font-pixel);
+  font-weight: 700;
+  font-size: 1.375rem;
   line-height: 1;
-  color: #07040f;
-  background: var(--pa-lime);
-  box-shadow: 0 0 10px var(--pa-lime);
 }
-.monitor[data-step="2"] .crown {
+.lg i {
+  width: 26px;
+  height: 6px;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+.lg.loss { color: var(--pa-red); }
+.lg.hits { color: var(--pa-lime); }
+/* лучшая версия по попаданиям: яркий кружок вокруг точки эпохи 4,
+   центр x = 20 + 90·3 = 290, y(0.74) = 20 + 0.26·236 ≈ 81 */
+.best-ring {
+  position: absolute;
+  left: calc(290px - 15px);
+  top: calc(81px - 15px);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow:
+    0 0 0 4px var(--pa-yellow),
+    0 0 18px 8px rgba(255, 225, 62, 0.6);
+}
+.monitor[data-step="2"] .best-ring {
   opacity: 1;
-  animation: crown-in 0.5s steps(5, end);
+  animation: ring-in 0.5s steps(5, end), ring-pulse 1.2s steps(2, end) 0.5s infinite;
 }
-@keyframes crown-in { from { transform: translateY(-14px); opacity: 0; } }
+@keyframes ring-in { from { transform: scale(2.2); opacity: 0; } }
+@keyframes ring-pulse { 50% { transform: scale(1.15); } }
 /* табло судей: клетки строго под эпохами графика */
 .judge {
   display: flex;
